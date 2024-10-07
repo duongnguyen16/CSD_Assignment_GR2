@@ -58,7 +58,8 @@ public class BookingList extends MyList<Booking> {
         boolean validInput = false;
 
         while (!validInput) {
-            do {
+            // Get valid bus code
+            while (bus == null) {
                 System.out.println("Enter bcode: ");
                 bcode = sc.nextLine().trim();
                 if (bcode.isEmpty()) {
@@ -69,19 +70,19 @@ public class BookingList extends MyList<Booking> {
                         System.out.println("Bus not found. Please try again.");
                     }
                 }
-            } while (bcode.isEmpty() || bus == null);
+            }
 
             int totalBookedSeats = calculateTotalBookedSeats(bcode, bus);
             int availableSeats = bus.getSeat() - totalBookedSeats;
 
-            // check if no seat available, return
             if (availableSeats == 0) {
-                System.out.println("No seats available for this bus. Please find another bus.");
-                sc.nextLine();
-                return;
+                System.out.println("No seats available for this bus. Please choose another bus.");
+                bus = null; // Reset bus to null to restart the loop
+                continue;
             }
 
-            do {
+            // Get valid passenger code
+            while (passenger == null) {
                 System.out.println("Enter pcode: ");
                 pcode = sc.nextLine().trim();
                 if (pcode.isEmpty()) {
@@ -92,27 +93,35 @@ public class BookingList extends MyList<Booking> {
                         System.out.println("Passenger not found. Please try again.");
                     }
                 }
-            } while (pcode.isEmpty() || passenger == null);
+            }
 
+            // Check for existing booking
+            if (hasExistingBooking(bcode, pcode)) {
+                System.out.println(
+                        "This passenger already has a booking for this bus. Please choose another bus or passenger.");
+                bus = null;
+                passenger = null;
+                continue;
+            }
 
+            // Get valid seat number
             boolean validSeat = false;
             while (!validSeat) {
-                System.out.println("Enter seat: ");
+                System.out.println("Enter number of seats (1-" + availableSeats + "): ");
                 try {
                     seat = Integer.parseInt(sc.nextLine().trim());
-                    if (seat <= 0) {
-                        System.out.println("Seat number must be positive. Please try again.");
-                    } else if (seat > availableSeats) {
-                        System.out.println("Not enough seats available. Available seats: "
-                                + availableSeats + ". Please try again.");
+                    if (seat <= 0 || seat > availableSeats) {
+                        System.out.println(
+                                "Invalid number of seats. Please enter a number between 1 and " + availableSeats + ".");
                     } else {
                         validSeat = true;
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid seat number. Please enter a valid integer.");
+                    System.out.println("Invalid input. Please enter a valid number.");
                 }
             }
 
+            // Confirm booking details
             System.out.println("Booking Details:");
             System.out.println("Bus Code: " + bcode);
             System.out.println("Passenger Code: " + pcode);
@@ -121,9 +130,15 @@ public class BookingList extends MyList<Booking> {
             String confirm = sc.nextLine().trim().toLowerCase();
             if (confirm.equals("y")) {
                 validInput = true;
+            } else {
+                // Reset all variables to allow re-entry
+                bus = null;
+                passenger = null;
+                seat = 0;
             }
         }
 
+        // Create and add the booking
         Date odate = new Date();
         boolean paid = false;
         Booking bk = new Booking(bcode, pcode, odate, paid, seat);
@@ -134,6 +149,17 @@ public class BookingList extends MyList<Booking> {
         } catch (Exception e) {
             System.out.println("An error occurred during booking. The operation has been cancelled.");
         }
+    }
+
+    private boolean hasExistingBooking(String bcode, String pcode) {
+        Node<Booking> current = this.getHead();
+        while (current != null) {
+            if (current.info.getBcode().equals(bcode) && current.info.getPcode().equals(pcode)) {
+                return true;
+            }
+            current = current.next;
+        }
+        return false;
     }
 
     private int calculateTotalBookedSeats(String bcode, Bus bus) {
