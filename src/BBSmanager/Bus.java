@@ -21,7 +21,8 @@ public class Bus implements Comparable<Bus> {
    public Bus() {
    }
 
-   public Bus(String bcode, String bnum, String dstation, String astation, double dtime, int seat, int booked, double atime) {
+   public Bus(String bcode, String bnum, String dstation, String astation, double dtime, int seat, int booked,
+         double atime) {
       this.bcode = bcode;
       this.bnum = bnum;
       this.dstation = dstation;
@@ -98,13 +99,15 @@ public class Bus implements Comparable<Bus> {
 
    @Override
    public String toString() {
-      return String.format("| %-10s | %-15s | %-25s | %-25s | %-20.2f | %-20d | %-25d | %-20.2f |", 
-                          bcode, bnum, dstation, astation, dtime, seat, booked, atime);
+      return String.format("| %-10s | %-15s | %-25s | %-25s | %-20.2f | %-20d | %-25d | %-20.2f |",
+            bcode, bnum, dstation, astation, dtime, seat, booked, atime);
    }
-   
-   public String saveFile(){
-       return bcode + ", "+ bnum+", "+ dstation+", "+ astation+", "+ dtime+", "+ seat+", "+ booked+", "+ atime;
+
+   public String saveFile() {
+      return bcode + ", " + bnum + ", " + dstation + ", " + astation + ", " + dtime + ", " + seat + ", " + booked + ", "
+            + atime;
    }
+
    @Override
    public int compareTo(Bus o) {
       return this.bcode.compareTo(o.bcode);

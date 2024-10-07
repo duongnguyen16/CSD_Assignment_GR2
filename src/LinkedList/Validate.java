@@ -132,7 +132,6 @@ public class Validate extends MyList {
         }
     }
 
-    // Check time(dtime,atime)
     public int getValidNumber(Scanner scanner, String message) {
         int number = 0;
         boolean valid = false;
@@ -141,16 +140,15 @@ public class Validate extends MyList {
                 System.out.print(message);
                 number = scanner.nextInt();
                 scanner.nextLine();
-                valid = true; // Nếu nhập đúng, thoát khỏi vòng lặp
+                valid = true;
             } catch (InputMismatchException e) {
                 System.out.println(message + " must be digit.");
-                scanner.next(); // Loại bỏ đầu vào không hợp lệ
+                scanner.next();
             }
         }
         return number;
     }
 
-    // Check time(dtime,atime)
     public double getValidTime(Scanner scanner, String message) {
         double time = 0;
         boolean valid = false;
@@ -159,10 +157,10 @@ public class Validate extends MyList {
                 System.out.print(message);
                 time = scanner.nextDouble();
                 scanner.nextLine();
-                valid = true; // Nếu nhập đúng, thoát khỏi vòng lặp
+                valid = true;
             } catch (InputMismatchException e) {
                 System.out.println("Invalid time. Please enter again");
-                scanner.next(); // Loại bỏ đầu vào không hợp lệ
+                scanner.next();
             }
         }
         return time;
@@ -200,7 +198,6 @@ public class Validate extends MyList {
         }
     }
 
-    // check user input string
     public String checkInputString() {
         while (true) {
             String result = in.nextLine().trim();
@@ -213,7 +210,6 @@ public class Validate extends MyList {
         }
     }
 
-    // check user input int
     public int checkInputInt() {
         while (true) {
             try {

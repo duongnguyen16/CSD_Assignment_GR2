@@ -46,7 +46,7 @@ public class BusList extends MyList<Bus> {
             }
          }
          br.close();
-         
+
          return true;
       } catch (Exception var16) {
          var16.printStackTrace();
@@ -141,9 +141,9 @@ public class BusList extends MyList<Bus> {
       Node<Bus> current = this.getHead();
       while (current != null) {
          if (current.info.getBcode().equalsIgnoreCase(bcode)) {
-            // Delete related bookings first
+
             bookingList.deleteBookingsByBcode(bcode);
-            // Then remove the bus
+
             this.remove(current);
             return true;
          }

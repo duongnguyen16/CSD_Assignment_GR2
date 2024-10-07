@@ -60,7 +60,7 @@ public class BookingList extends MyList<Booking> {
         int seat;
 
         while (true) {
-            // Get valid bus code
+
             do {
                 System.out.println("Enter bcode: ");
                 bcode = validate.checkInputString();
@@ -73,7 +73,6 @@ public class BookingList extends MyList<Booking> {
                 continue;
             }
 
-            // Get valid passenger code
             do {
                 System.out.println("Enter pcode: ");
                 pcode = validate.checkInputString();
@@ -86,11 +85,9 @@ public class BookingList extends MyList<Booking> {
                 continue;
             }
 
-            // Get valid seat number
             System.out.println("Enter number of seats (1-" + availableSeats + "): ");
             seat = validate.checkInputIntLimit(1, availableSeats);
 
-            // Confirm booking details
             System.out.println("Booking Details:");
             System.out.println("Bus Code: " + bcode);
             System.out.println("Passenger Code: " + pcode);
@@ -101,7 +98,6 @@ public class BookingList extends MyList<Booking> {
             }
         }
 
-        // Create and add the booking
         Booking bk = new Booking(bcode, pcode, new Date(), false, seat);
         try {
             this.addLast(bk);
@@ -131,7 +127,7 @@ public class BookingList extends MyList<Booking> {
             }
             current = current.next;
         }
-        // plus booked seat from the bcode in bus
+
         totalBookedSeats += bus.getBooked();
         return totalBookedSeats;
     }
@@ -227,15 +223,21 @@ public class BookingList extends MyList<Booking> {
     }
 
     public void displayPassengersForBus(String bcode, PassengerList passengerList) {
+
+        int count = 0;
         Node<Booking> current = this.getHead();
         while (current != null) {
             if (current.info.getBcode().equals(bcode)) {
                 Passenger passenger = passengerList.searchByPcode(current.info.getPcode());
+                count++;
                 if (passenger != null) {
                     System.out.println(passenger);
                 }
             }
             current = current.next;
+        }
+        if (count == 0) {
+            System.out.println("No passenger found.");
         }
     }
 

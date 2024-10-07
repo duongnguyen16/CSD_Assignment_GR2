@@ -3,8 +3,8 @@ package csdassignment;
 import BBSList.PassengerList;
 import BBSmanager.Bus;
 import BBSmanager.Passenger;
-import LinkedList.Node;
 import java.util.Scanner;
+import java.util.InputMismatchException;
 
 import BBSList.BookingList;
 import BBSList.BusList;
@@ -17,7 +17,6 @@ public class CSDAssignment {
     private static PassengerList passengerList = new PassengerList();
 
     public static void main(String[] args) {
-
         bookingList.loadFromFile();
         busList.loadFromFile();
         passengerList.loadFromFile();
@@ -30,10 +29,8 @@ public class CSDAssignment {
             System.out.println("3. Manage Passenger");
             System.out.println("4. Save all data");
             System.out.println("0. Exit");
-            System.out.print("Enter your choice: ");
 
-            int choice = sc.nextInt();
-            sc.nextLine();
+            int choice = getIntInput("Enter your choice: ", 0, 4);
 
             switch (choice) {
                 case 1:
@@ -55,8 +52,6 @@ public class CSDAssignment {
                 case 0:
                     System.out.println("Exiting...");
                     return;
-                default:
-                    System.out.println("Invalid choice. Try again.");
             }
         }
     }
@@ -70,10 +65,8 @@ public class CSDAssignment {
             System.out.println("2. Sort Booking by Bcode and Pcode");
             System.out.println("3. Pay Booking by Bcode and Pcode");
             System.out.println("0. Back to Main Menu");
-            System.out.print("Enter your choice: ");
 
-            int choice = sc.nextInt();
-            sc.nextLine(); // consume newline
+            int choice = getIntInput("Enter your choice: ", 0, 3);
 
             switch (choice) {
                 case 1:
@@ -90,8 +83,6 @@ public class CSDAssignment {
                 case 0:
                     bookingList.saveToFile();
                     return;
-                default:
-                    System.out.println("Invalid choice. Try again.");
             }
             bookingList.saveToFile();
         }
@@ -110,11 +101,10 @@ public class CSDAssignment {
             System.out.println("6. Add after position");
             System.out.println("7. Delete bus at position");
             System.out.println("8. Search booked seat by code");
-            System.out.println("9. Search booked by bcode"); // New option
             System.out.println("0. Back to Main Menu");
-            System.out.print("Enter your choice: ");
-            int choice = sc.nextInt();
-            sc.nextLine();
+
+            int choice = getIntInput("Enter your choice: ", 0, 9);
+
             switch (choice) {
                 case 1:
                     busList.inputAndAddBusEnd();
@@ -145,8 +135,7 @@ public class CSDAssignment {
                     busList.addAfterPosition();
                     break;
                 case 7:
-                    System.out.println("Enter position to delete: ");
-                    int pos1 = sc.nextInt();
+                    int pos1 = getIntInput("Enter position to delete: ", 1, Integer.MAX_VALUE);
                     busList.deleteAtPosition(pos1);
                     waitForEnter();
                     break;
@@ -156,21 +145,15 @@ public class CSDAssignment {
                     busList.searchBookedByBcode(bs, bookingList, passengerList);
                     waitForEnter();
                     break;
-                case 9:
-                    searchBookedByBcode();
-                    break;
                 case 0:
                     busList.saveToFile();
                     return;
-                default:
-                    System.out.println("Invalid choice. Try again.");
             }
             busList.saveToFile();
         }
     }
 
     private static void managePassenger() {
-
         while (true) {
             clearScreen();
             System.out.println("\n=== Manage Passenger ===");
@@ -181,10 +164,8 @@ public class CSDAssignment {
             System.out.println("4. Search Passenger by Name");
             System.out.println("5. Search Bus by Passenger Code");
             System.out.println("0. Back to Main Menu");
-            System.out.print("Enter your choice: ");
 
-            int choice = sc.nextInt();
-            sc.nextLine(); // consume newline
+            int choice = getIntInput("Enter your choice: ", 0, 5);
 
             switch (choice) {
                 case 1:
@@ -229,9 +210,6 @@ public class CSDAssignment {
                 case 0:
                     passengerList.saveToFile();
                     return;
-                default:
-                    System.out.println("Invalid choice. Try again.");
-
             }
             passengerList.saveToFile();
         }
@@ -277,5 +255,24 @@ public class CSDAssignment {
     private static void waitForEnter() {
         System.out.println("\nPress Enter to continue...");
         sc.nextLine();
+    }
+
+    private static int getIntInput(String prompt, int min, int max) {
+        int input;
+        while (true) {
+            try {
+                System.out.print(prompt);
+                input = sc.nextInt();
+                sc.nextLine();
+                if (input >= min && input <= max) {
+                    return input;
+                } else {
+                    System.out.println("Please enter a number between " + min + " and " + max + ".");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                sc.nextLine();
+            }
+        }
     }
 }

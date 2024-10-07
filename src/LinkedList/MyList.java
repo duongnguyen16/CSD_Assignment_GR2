@@ -181,38 +181,37 @@ public class MyList<T> {
    }
 
    public void insertAfter(int k, T x) {
-    // Bước 1: Kiểm tra danh sách rỗng.
-    if (head == null) {
-        System.out.println("The list is empty.");
-        return;
-    }
+      // Bước 1: Kiểm tra danh sách rỗng.
+      if (head == null) {
+         System.out.println("The list is empty.");
+         return;
+      }
 
-    // Bước 2: Tìm Node tại vị trí k.
-    Node<T> p = head;
-    int count = 1;
-    while (p != null && count < k) {
-        p = p.next;
-        count++;
-    }
+      // Bước 2: Tìm Node tại vị trí k.
+      Node<T> p = head;
+      int count = 1;
+      while (p != null && count < k) {
+         p = p.next;
+         count++;
+      }
 
-    // Bước 3: Kiểm tra nếu vị trí k hợp lệ (tìm thấy Node tại vị trí k).
-    if (p == null) {
-        System.out.println("Position " + k + " is out of bounds.");
-    } else {
-        // Bước 4: Tạo Node mới chứa giá trị x.
-        Node<T> newNode = new Node<>(x);
+      // Bước 3: Kiểm tra nếu vị trí k hợp lệ (tìm thấy Node tại vị trí k).
+      if (p == null) {
+         System.out.println("Position " + k + " is out of bounds.");
+      } else {
+         // Bước 4: Tạo Node mới chứa giá trị x.
+         Node<T> newNode = new Node<>(x);
 
-        // Bước 5: Chèn Node mới vào sau vị trí k.
-        newNode.next = p.next;
-        p.next = newNode;
+         // Bước 5: Chèn Node mới vào sau vị trí k.
+         newNode.next = p.next;
+         p.next = newNode;
 
-        // Nếu chèn vào cuối danh sách, cập nhật tail.
-        if (p == tail) {
+         // Nếu chèn vào cuối danh sách, cập nhật tail.
+         if (p == tail) {
             tail = newNode;
-        }
-    }
-}
-
+         }
+      }
+   }
 
    public void insertBefore(Node<T> p, T x) {
       if (p == this.head) {

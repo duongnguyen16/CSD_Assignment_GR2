@@ -21,6 +21,6 @@ public class Node<T> {
    }
 
    public Node(T x) {
-      this(x, (Node)null);
+      this(x, (Node) null);
    }
 }
