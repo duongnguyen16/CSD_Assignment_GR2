@@ -48,7 +48,7 @@ public class Passenger {
 
 public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(String.format("| %-16s | %-20s | %-15s |\n", this.pcode, this.name, this.phone));
+    sb.append(String.format("| %-16s | %-20s | %-15s |", this.pcode, this.name, this.phone));
     return sb.toString();
 }
 }

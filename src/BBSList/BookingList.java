@@ -6,6 +6,8 @@ import BBSmanager.Bus;
 import BBSmanager.Passenger;
 import LinkedList.MyList;
 import LinkedList.Node;
+import LinkedList.Validate;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -18,6 +20,7 @@ import java.util.*;
 public class BookingList extends MyList<Booking> {
 
     Scanner sc = new Scanner(System.in);
+    Validate validate = new Validate();
 
     public void loadFromFile() {
         try {
@@ -51,75 +54,41 @@ public class BookingList extends MyList<Booking> {
     }
 
     public void bookBus(BusList busList, PassengerList passengerList) {
-        String bcode = "", pcode = "";
-        Bus bus = null;
-        Passenger passenger = null;
-        int seat = 0;
-        boolean validInput = false;
+        String bcode, pcode;
+        Bus bus;
+        Passenger passenger;
+        int seat;
 
-        while (!validInput) {
+        while (true) {
             // Get valid bus code
-            while (bus == null) {
+            do {
                 System.out.println("Enter bcode: ");
-                bcode = sc.nextLine().trim();
-                if (bcode.isEmpty()) {
-                    System.out.println("Bus code cannot be empty. Please try again.");
-                } else {
-                    bus = busList.searchByBcode(bcode);
-                    if (bus == null) {
-                        System.out.println("Bus not found. Please try again.");
-                    }
-                }
-            }
+                bcode = validate.checkInputString();
+                bus = busList.searchByBcode(bcode);
+            } while (bus == null);
 
-            int totalBookedSeats = calculateTotalBookedSeats(bcode, bus);
-            int availableSeats = bus.getSeat() - totalBookedSeats;
-
+            int availableSeats = bus.getSeat() - calculateTotalBookedSeats(bcode, bus);
             if (availableSeats == 0) {
                 System.out.println("No seats available for this bus. Please choose another bus.");
-                bus = null; // Reset bus to null to restart the loop
                 continue;
             }
 
             // Get valid passenger code
-            while (passenger == null) {
+            do {
                 System.out.println("Enter pcode: ");
-                pcode = sc.nextLine().trim();
-                if (pcode.isEmpty()) {
-                    System.out.println("Passenger code cannot be empty. Please try again.");
-                } else {
-                    passenger = passengerList.searchByPcode(pcode);
-                    if (passenger == null) {
-                        System.out.println("Passenger not found. Please try again.");
-                    }
-                }
-            }
+                pcode = validate.checkInputString();
+                passenger = passengerList.searchByPcode(pcode);
+            } while (passenger == null);
 
-            // Check for existing booking
             if (hasExistingBooking(bcode, pcode)) {
                 System.out.println(
                         "This passenger already has a booking for this bus. Please choose another bus or passenger.");
-                bus = null;
-                passenger = null;
                 continue;
             }
 
             // Get valid seat number
-            boolean validSeat = false;
-            while (!validSeat) {
-                System.out.println("Enter number of seats (1-" + availableSeats + "): ");
-                try {
-                    seat = Integer.parseInt(sc.nextLine().trim());
-                    if (seat <= 0 || seat > availableSeats) {
-                        System.out.println(
-                                "Invalid number of seats. Please enter a number between 1 and " + availableSeats + ".");
-                    } else {
-                        validSeat = true;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a valid number.");
-                }
-            }
+            System.out.println("Enter number of seats (1-" + availableSeats + "): ");
+            seat = validate.checkInputIntLimit(1, availableSeats);
 
             // Confirm booking details
             System.out.println("Booking Details:");
@@ -127,22 +96,13 @@ public class BookingList extends MyList<Booking> {
             System.out.println("Passenger Code: " + pcode);
             System.out.println("Seats: " + seat);
             System.out.println("Is this correct? (Y/N)");
-            String confirm = sc.nextLine().trim().toLowerCase();
-            if (confirm.equals("y")) {
-                validInput = true;
-            } else {
-                // Reset all variables to allow re-entry
-                bus = null;
-                passenger = null;
-                seat = 0;
+            if (validate.checkInputYN()) {
+                break;
             }
         }
 
         // Create and add the booking
-        Date odate = new Date();
-        boolean paid = false;
-        Booking bk = new Booking(bcode, pcode, odate, paid, seat);
-
+        Booking bk = new Booking(bcode, pcode, new Date(), false, seat);
         try {
             this.addLast(bk);
             System.out.println("Booking successful.");
@@ -219,9 +179,9 @@ public class BookingList extends MyList<Booking> {
 
     public void payByBcodePcode() {
         System.out.println("Enter bcode: ");
-        String bcode = sc.nextLine().trim();
+        String bcode = validate.checkInputString();
         System.out.println("Enter pcode: ");
-        String pcode = sc.nextLine().trim();
+        String pcode = validate.checkInputString();
 
         Node<Booking> current = this.getHead();
         while (current != null) {

@@ -62,7 +62,7 @@ public class PassengerList extends MyList<Passenger> {
 
    public void display() {
       System.out.println("+------------------+----------------------+-----------------+");
-      System.out.println("| Passenger Code    | Name                 | Phone           |");
+      System.out.println("| Passenger Code   | Name                 | Phone           |");
       System.out.println("+------------------+----------------------+-----------------+");
       this.traverse();
    }
