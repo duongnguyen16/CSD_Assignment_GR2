@@ -93,6 +93,7 @@ public class CSDAssignment {
                 default:
                     System.out.println("Invalid choice. Try again.");
             }
+            bookingList.saveToFile();
         }
     }
 
@@ -164,6 +165,7 @@ public class CSDAssignment {
                 default:
                     System.out.println("Invalid choice. Try again.");
             }
+            busList.saveToFile();
         }
     }
 
@@ -229,7 +231,9 @@ public class CSDAssignment {
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");
+
             }
+            passengerList.saveToFile();
         }
     }
 

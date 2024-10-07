@@ -45,7 +45,8 @@ public class BusList extends MyList<Bus> {
                this.addLast(bus);
             }
          }
-
+         br.close();
+         
          return true;
       } catch (Exception var16) {
          var16.printStackTrace();

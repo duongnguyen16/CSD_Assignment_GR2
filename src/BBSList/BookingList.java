@@ -58,7 +58,6 @@ public class BookingList extends MyList<Booking> {
         boolean validInput = false;
 
         while (!validInput) {
-            // Get and validate bcode
             do {
                 System.out.println("Enter bcode: ");
                 bcode = sc.nextLine().trim();
@@ -72,7 +71,16 @@ public class BookingList extends MyList<Booking> {
                 }
             } while (bcode.isEmpty() || bus == null);
 
-            // Get and validate pcode
+            int totalBookedSeats = calculateTotalBookedSeats(bcode, bus);
+            int availableSeats = bus.getSeat() - totalBookedSeats;
+
+            // check if no seat available, return
+            if (availableSeats == 0) {
+                System.out.println("No seats available for this bus. Please find another bus.");
+                sc.nextLine();
+                return;
+            }
+
             do {
                 System.out.println("Enter pcode: ");
                 pcode = sc.nextLine().trim();
@@ -86,7 +94,7 @@ public class BookingList extends MyList<Booking> {
                 }
             } while (pcode.isEmpty() || passenger == null);
 
-            // Get and validate seat number
+
             boolean validSeat = false;
             while (!validSeat) {
                 System.out.println("Enter seat: ");
@@ -94,9 +102,9 @@ public class BookingList extends MyList<Booking> {
                     seat = Integer.parseInt(sc.nextLine().trim());
                     if (seat <= 0) {
                         System.out.println("Seat number must be positive. Please try again.");
-                    } else if (seat > bus.getSeat() - bus.getBooked()) {
+                    } else if (seat > availableSeats) {
                         System.out.println("Not enough seats available. Available seats: "
-                                + (bus.getSeat() - bus.getBooked()) + ". Please try again.");
+                                + availableSeats + ". Please try again.");
                     } else {
                         validSeat = true;
                     }
@@ -105,7 +113,6 @@ public class BookingList extends MyList<Booking> {
                 }
             }
 
-            // Confirm booking details
             System.out.println("Booking Details:");
             System.out.println("Bus Code: " + bcode);
             System.out.println("Passenger Code: " + pcode);
@@ -117,20 +124,30 @@ public class BookingList extends MyList<Booking> {
             }
         }
 
-        // Process the booking
         Date odate = new Date();
-        boolean paid = false; // Set to false for new bookings
+        boolean paid = false;
         Booking bk = new Booking(bcode, pcode, odate, paid, seat);
 
-        // Use a transaction-like approach
         try {
             this.addLast(bk);
-            bus.setBooked(bus.getBooked() + seat);
-            bus.setSeat(bus.getSeat() - seat);
             System.out.println("Booking successful.");
         } catch (Exception e) {
             System.out.println("An error occurred during booking. The operation has been cancelled.");
         }
+    }
+
+    private int calculateTotalBookedSeats(String bcode, Bus bus) {
+        int totalBookedSeats = 0;
+        Node<Booking> current = this.getHead();
+        while (current != null) {
+            if (current.info.getBcode().equals(bcode)) {
+                totalBookedSeats += current.info.getSeat();
+            }
+            current = current.next;
+        }
+        // plus booked seat from the bcode in bus
+        totalBookedSeats += bus.getBooked();
+        return totalBookedSeats;
     }
 
     public void display() {
@@ -139,7 +156,7 @@ public class BookingList extends MyList<Booking> {
     }
 
     public String exportToDate(Date date) {
-        // export to dd-MM-yyyy in String
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         return sdf.format(date);
     }
@@ -197,7 +214,6 @@ public class BookingList extends MyList<Booking> {
         System.out.println("Booking not found.");
     }
 
-    // 1.6, 1.12, 2.6
     public void deleteBookingsByBcode(String bcode) {
         Node<Booking> current = this.getHead();
         while (current != null) {
