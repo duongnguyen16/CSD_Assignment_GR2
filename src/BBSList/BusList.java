@@ -19,6 +19,7 @@ import LinkedList.Validate;
 public class BusList extends MyList<Bus> {
    public Validate vali = new Validate();
    public Scanner scan;
+   public Validate validate = new Validate();
 
    public BusList() {
       this.scan = new Scanner(System.in);
@@ -53,8 +54,12 @@ public class BusList extends MyList<Bus> {
    }
 
    public void inputAndAddBusEnd() {
-      System.out.println("Enter the bus code: ");
-      String bcode = vali.searchBcode();
+      String bcode;
+      do {
+         System.out.println("Enter the code of the bus: ");
+         bcode = scan.nextLine();
+      } while (!searchCode(bcode));
+
       System.out.println("Enter the number of the bus: ");
       String bnum = scan.nextLine();
 
@@ -63,35 +68,18 @@ public class BusList extends MyList<Bus> {
 
       System.out.println("Enter the arriving station of the bus: ");
       String astation = scan.nextLine();
-      double dtime;
-      do {
-         dtime = vali.getValidTime(scan, "Enter the departing time of the bus (0-24): ");
-         if (dtime < 0 || dtime > 24) {
-            System.out.println("The departing time of the bus must be greater than 0 and smaller than or equal to 24.");
-         }
-      } while (dtime < 0 || dtime > 24);
-      int seat;
-      do {
-         seat = vali.getValidNumber(scan, "Enter the number of seats in the bus (greater than 0): ");
-         if (seat <= 0) {
-            System.out.println("The number of seats must be greater than 0.");
-         }
-      } while (seat <= 0);
-      int booked;
-      do {
-         booked = vali.getValidNumber(scan, "Enter the number of seats which are booked (0 to number of seats): ");
-         if (booked < 0 || booked > seat) {
-            System.out.println("The number of seats which are booked must be between 0 and the number of seats.");
-         }
-      } while (booked < 0 || booked > seat);
-      double atime;
-      do {
-         atime = vali.getValidTime(scan, "Enter the arriving time of the bus (greater than departing time and 0-24): ");
-         if (atime < dtime || atime > 24) {
-            System.out.println(
-                  "The arriving time of the bus must be greater than the departing time and less than or equal to 24.");
-         }
-      } while (atime < dtime || atime > 24);
+
+      System.out.println("Enter the departing time of the bus: ");
+      double dtime = validate.checkInputDoubleLimit(0, 24);
+
+      System.out.println("Enter the number of seats in the bus: ");
+      int seat = validate.checkInputIntLimit(0, Integer.MAX_VALUE);
+
+      System.out.println("Enter the number of seats which are booked: ");
+      int booked = validate.checkInputIntLimit(0, seat);
+
+      System.out.println("Enter the arriving time of the bus: ");
+      double atime = validate.checkInputDoubleLimit(dtime, 24);
 
       Bus bus = new Bus(bcode, bnum, dstation, astation, dtime, seat, booked, atime);
       addLast(bus);
@@ -104,9 +92,9 @@ public class BusList extends MyList<Bus> {
       this.traverse();
    }
 
-   public boolean saveToFile(String filename) {
+   public boolean saveToFile() {
       try {
-         BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+         BufferedWriter bw = new BufferedWriter(new FileWriter("./buses.txt"));
          boolean var4;
          try {
             Node<Bus> current = this.getHead();
@@ -188,59 +176,38 @@ public class BusList extends MyList<Bus> {
       do {
          System.out.println("Enter the code of the bus: ");
          bcode = scan.nextLine();
-         if (!searchCode(bcode)) {
-            System.out.println("Bus Code already Exist");
-         }
       } while (!searchCode(bcode));
+
       System.out.println("Enter the number of the bus: ");
       String bnum = scan.nextLine();
+
       System.out.println("Enter the departing station of the bus: ");
       String dstation = scan.nextLine();
+
       System.out.println("Enter the arriving station of the bus: ");
       String astation = scan.nextLine();
+
       System.out.println("Enter the departing time of the bus: ");
-      double dtime;
-      while (true) {
-         dtime = scan.nextDouble();
-         if (dtime >= 0 && dtime <= 24) {
-            break;
-         }
-         System.out.println("the departing time of the bus must be greater than 0 and smaller than 24");
-      }
+      double dtime = validate.checkInputDoubleLimit(0, 24);
+
       System.out.println("Enter the number of seats in the bus: ");
-      int seat;
-      while (true) {
-         seat = scan.nextInt();
-         if (seat > 0) {
-            break;
-         }
-         System.out.println("the number of seats must be greater than 0");
-      }
+      int seat = validate.checkInputIntLimit(0, Integer.MAX_VALUE);
+
       System.out.println("Enter the number of seats which are booked: ");
-      int booked;
-      while (true) {
-         booked = scan.nextInt();
-         if (booked >= 0 && booked <= seat) {
-            break;
-         }
-         System.out
-               .println("the number of seats which are booked must be greater than 0 and smaller than number of seats");
-      }
+      int booked = validate.checkInputIntLimit(0, seat);
+
       System.out.println("Enter the arriving time of the bus: ");
-      double atime;
-      while (true) {
-         atime = scan.nextDouble();
-         if (atime >= dtime && atime <= 24) {
-            break;
-         }
-         System.out.println("the arriving time of the bus must be greater than departing time and smaller than 24");
-      }
+      double atime = validate.checkInputDoubleLimit(dtime, 24);
 
       Bus bus = new Bus(bcode, bnum, dstation, astation, dtime, seat, booked, atime);
       addFirst(bus);
    }
 
    public void addAfterPosition() {
+      if (size() <= 0) {
+         System.out.println("The list is empty");
+         return;
+      }
       System.out.println("Enter position to add after: ");
       int k = scan.nextInt();
       scan.nextLine();
@@ -248,53 +215,28 @@ public class BusList extends MyList<Bus> {
       do {
          System.out.println("Enter the code of the bus: ");
          bcode = scan.nextLine();
-         if (!searchCode(bcode)) {
-            System.out.println("Bus Code already Exist");
-         }
       } while (!searchCode(bcode));
+
       System.out.println("Enter the number of the bus: ");
       String bnum = scan.nextLine();
+
       System.out.println("Enter the departing station of the bus: ");
       String dstation = scan.nextLine();
+
       System.out.println("Enter the arriving station of the bus: ");
       String astation = scan.nextLine();
+
       System.out.println("Enter the departing time of the bus: ");
-      double dtime;
-      while (true) {
-         dtime = scan.nextDouble();
-         if (dtime >= 0 && dtime <= 24) {
-            break;
-         }
-         System.out.println("the departing time of the bus must be greater than 0 and smaller than 24");
-      }
+      double dtime = validate.checkInputDoubleLimit(0, 24);
+
       System.out.println("Enter the number of seats in the bus: ");
-      int seat;
-      while (true) {
-         seat = scan.nextInt();
-         if (seat > 0) {
-            break;
-         }
-         System.out.println("the number of seats must be greater than 0");
-      }
+      int seat = validate.checkInputIntLimit(0, Integer.MAX_VALUE);
+
       System.out.println("Enter the number of seats which are booked: ");
-      int booked;
-      while (true) {
-         booked = scan.nextInt();
-         if (booked >= 0 && booked <= seat) {
-            break;
-         }
-         System.out
-               .println("the number of seats which are booked must be greater than 0 and smaller than number of seats");
-      }
+      int booked = validate.checkInputIntLimit(0, seat);
+
       System.out.println("Enter the arriving time of the bus: ");
-      double atime;
-      while (true) {
-         atime = scan.nextDouble();
-         if (atime >= dtime && atime <= 24) {
-            break;
-         }
-         System.out.println("the arriving time of the bus must be greater than departing time and smaller than 24");
-      }
+      double atime = validate.checkInputDoubleLimit(dtime, 24);
 
       Bus bus = new Bus(bcode, bnum, dstation, astation, dtime, seat, booked, atime);
       insertAfter(k, bus);

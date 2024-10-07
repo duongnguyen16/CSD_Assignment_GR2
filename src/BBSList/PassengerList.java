@@ -51,11 +51,11 @@ public class PassengerList extends MyList<Passenger> {
 
    public void inputAndAddToEnd() {
       System.out.println("Enter Passenger code: ");
-      String pcode = vali.searchPcode();
+      String pcode = vali.searchPcode(this);
       System.out.println("Enter Paseenger name: ");
       String name = vali.checkName();
       System.out.println("Enter Passenger phone: ");
-      String phone = vali.checkPhone();
+      String phone = vali.checkPhone(this);
       Passenger ps = new Passenger(pcode, name, phone);
       this.addLast(ps);
    }

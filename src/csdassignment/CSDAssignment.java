@@ -16,10 +16,6 @@ public class CSDAssignment {
     private static BusList busList = new BusList();
     private static PassengerList passengerList = new PassengerList();
 
-    
-
-
-
     public static void main(String[] args) {
 
         bookingList.loadFromFile();
@@ -32,6 +28,7 @@ public class CSDAssignment {
             System.out.println("1. Manage Booking");
             System.out.println("2. Manage Bus");
             System.out.println("3. Manage Passenger");
+            System.out.println("4. Save all data");
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
 
@@ -47,6 +44,13 @@ public class CSDAssignment {
                     break;
                 case 3:
                     managePassenger();
+                    break;
+                case 4:
+                    bookingList.saveToFile();
+                    busList.saveToFile();
+                    passengerList.saveToFile();
+                    System.out.println("Data saved successfully.");
+                    waitForEnter();
                     break;
                 case 0:
                     System.out.println("Exiting...");
@@ -155,7 +159,7 @@ public class CSDAssignment {
                     searchBookedByBcode();
                     break;
                 case 0:
-                    busList.saveToFile("buses.txt");
+                    busList.saveToFile();
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");

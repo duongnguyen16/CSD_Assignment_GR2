@@ -6,9 +6,9 @@ import java.util.Date;
 public class Booking {
    private String bcode;
    private String pcode;
-   private Date odate;
-   private boolean paid;
-   private int seat;
+      private Date odate;
+      private boolean paid;
+      private int seat;
 
    public Booking() {
    }
@@ -69,7 +69,6 @@ public class Booking {
 
    public String toString() {
       // format the odate to dd-MM-yyyy
-
       return String.format("| %-10s | %-10s | %-15s | %-5s | %-5d |", this.bcode, this.pcode, toDate(this.odate),
             this.paid, this.seat);
    }

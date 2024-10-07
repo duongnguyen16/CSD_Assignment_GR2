@@ -1,7 +1,6 @@
+B000, Bus000, Ha Noi, HCM City, 1.0, 10, 9, 23.0
 B001, Bus101, CentralStation, AirportTerminal, 8.3, 50, 20, 9.45
-B003, Bus303, BeachFront, MountainResort, 12.15, 35, 30, 14.3
 B002, Bus202, SuburbHub, CityCenter, 10.0, 40, 15, 10.45
-B005, Bus505, HistoricalDistrict, SportsStadium, 16.3, 55, 25, 17.15
+B003, Bus303, BeachFront, MountainResort, 12.15, 35, 30, 14.3
 B004, Bus404, UniversityCampus, ShoppingMall, 14.0, 45, 10, 14.45
-B007, Bus707, ResidentialComplex, BusinessPark, 7.45, 40, 35, 8.3
-B006, Bus606, TechnologyPark, ConventionCenter, 18.0, 30, 5, 18.3
+B006, Bus606, TechnologyPark, ConventionCenter, 18.0, 25, 10, 18.3
