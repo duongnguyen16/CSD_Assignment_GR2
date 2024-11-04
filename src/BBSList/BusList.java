@@ -8,7 +8,6 @@ package BBSList;
 import BBSmanager.Bus;
 import LinkedList.MyList;
 import BStree.MyBSTree;
-import BStree.MyQueue;
 import BStree.Node;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,7 +15,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.ArrayList;
 import LinkedList.Validate;
+import BBSmanager.*;
 
 public class BusList extends MyBSTree<Bus> {
    public Validate vali = new Validate();
@@ -221,6 +222,31 @@ public class BusList extends MyBSTree<Bus> {
          bookingList.displayPassengersForBus(bcode, passengerList);
       } else {
          System.out.println("Bus not found.");
+      }
+   }
+
+   public void searchBusByPassengerName(String name, BookingList bl, PassengerList pl) {
+      // get the passenger ID
+      Passenger passenger = pl.searchByName(name);
+      if (passenger == null) {
+         System.out.println("Passenger not found.");
+         return;
+      }
+      String pcode = passenger.getPcode();
+
+      ArrayList<String> busCodeList = bl.getBusCodeListByPassengerCode(pcode);
+
+      if (busCodeList.isEmpty()) {
+         System.out.println("No bus found for this passenger.");
+         return;
+      }
+
+      System.out.println("Buses found for this passenger:");
+      for (String bcode : busCodeList) {
+         Bus bus = searchByBcode(bcode);
+         if (bus != null) {
+            System.out.println(bus);
+         }
       }
    }
 }

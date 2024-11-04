@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package BBSmanager;
 
 /**
@@ -9,9 +6,9 @@ package BBSmanager;
  * @author ASUS
  */
 public class Passenger implements Comparable<Passenger> {
-   private String pcode;
-   private String name;
-   private String phone;
+   public String pcode;
+   public String name;
+   public String phone;
 
    public Passenger() {
    }

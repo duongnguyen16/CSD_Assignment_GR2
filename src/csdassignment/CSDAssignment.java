@@ -91,16 +91,17 @@ public class CSDAssignment {
     private static void manageBus() {
         while (true) {
             clearScreen();
+            busList.displayBusListByInOrder();
             System.out.println("\n=== Manage Bus ===");
-            System.out.println("1. Display Bus List (In-order)");
+            System.out.println("1. Add a Bus");
             System.out.println("2. Display Bus List (Post-order)");
-            System.out.println("3. Display Bus List (Breadth-first)");
-            System.out.println("4. Add a Bus");
-            System.out.println("5. Search Bus by Code");
-            System.out.println("6. Delete Bus by Code (Copying)");
-            System.out.println("7. Delete Bus by Code (Merging)");
-            System.out.println("8. Balance the BST");
-            System.out.println("9. Count Total Buses");
+            System.out.println("3. Search Bus by Code");
+            System.out.println("4. Delete Bus by Code (Copying)");
+            System.out.println("5. Delete Bus by Code (Merging)");
+            System.out.println("6. Balance the BST");
+            System.out.println("7. Display Bus List (Breadth-first)");
+            System.out.println("8. Count Total Buses");
+            System.out.println("9. Search by name");
             System.out.println("10. Search Booked Seats by Code");
             System.out.println("0. Back to Main Menu");
 
@@ -108,36 +109,38 @@ public class CSDAssignment {
 
             switch (choice) {
                 case 1:
-                    busList.displayBusListByInOrder();
-                    waitForEnter();
+                    busList.inputAndAddBusEnd();
                     break;
                 case 2:
                     busList.displayBusListByPostOrder();
                     waitForEnter();
                     break;
                 case 3:
-                    busList.displayBusListByBreath();
+                    searchBusByCode();
                     waitForEnter();
                     break;
                 case 4:
-                    busList.inputAndAddBusEnd();
-                    break;
-                case 5:
-                    searchBusByCode();
-                    break;
-                case 6:
                     deleteByBcodeCopying();
                     break;
-                case 7:
+                case 5:
                     deleteByBcodeMerging();
                     break;
-                case 8:
+                case 6:
                     busList.balance();
                     System.out.println("BST has been balanced.");
+                    busList.displayBusListByBreath();
+                    waitForEnter();
+                    break;
+                case 7:
+                    busList.displayBusListByBreath();
+                    waitForEnter();
+                    break;
+                case 8:
+                    System.out.println("Total number of buses: " + busList.countBuses());
                     waitForEnter();
                     break;
                 case 9:
-                    System.out.println("Total number of buses: " + busList.countBuses());
+                    findBusByPassengerName();
                     waitForEnter();
                     break;
                 case 10:
@@ -187,6 +190,14 @@ public class CSDAssignment {
             }
             passengerList.saveToFile();
         }
+    }
+
+    private static void findBusByPassengerName() {
+        System.out.print("Enter Passenger Name: ");
+        String name = sc.nextLine().trim();
+        busList.searchBusByPassengerName(name, bookingList, passengerList);
+
+        waitForEnter();
     }
 
     private static void searchPassengerByCode() {
@@ -252,7 +263,6 @@ public class CSDAssignment {
         } else {
             System.out.println("Bus not found.");
         }
-        waitForEnter();
     }
 
     private static void searchBookedSeatsByCode() {
@@ -300,7 +310,7 @@ public class CSDAssignment {
             try {
                 System.out.print(prompt);
                 input = sc.nextInt();
-                sc.nextLine(); // Consume newline
+                sc.nextLine();
                 if (input >= min && input <= max) {
                     return input;
                 } else {
@@ -308,7 +318,7 @@ public class CSDAssignment {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a number.");
-                sc.nextLine(); // Consume invalid input
+                sc.nextLine(); 
             }
         }
     }

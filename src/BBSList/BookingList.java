@@ -242,4 +242,15 @@ public class BookingList extends MyList<Booking> {
         }
     }
 
+    public ArrayList<String> getBusCodeListByPassengerCode (String pCode) {
+        ArrayList<String> busCodeList = new ArrayList<>();
+        Node<Booking> current = getHead();
+        while (current != null) {
+            if (current.info.getPcode().equals(pCode)) {
+                busCodeList.add(current.info.getBcode());
+            }
+            current = current.next;
+        }
+        return busCodeList;
+    }
 }
