@@ -130,6 +130,20 @@ public class MyList<T> {
       return null;
    }
 
+   // get a specific index
+   public Node<T> get(int index) {
+      Node<T> p = head;
+      int count = 0;
+      while (p != null) {
+         if (count == index) {
+            return p;
+         }
+         p = p.next;
+         count++;
+      }
+      return null;
+   }
+
    public Node<T> find(Node<T> p) {
       for (Node<T> m = this.head; m != null; m = m.next) {
          if (m.info.equals(p.info)) {

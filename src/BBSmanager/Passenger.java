@@ -8,7 +8,7 @@ package BBSmanager;
  *
  * @author ASUS
  */
-public class Passenger {
+public class Passenger implements Comparable<Passenger> {
    private String pcode;
    private String name;
    private String phone;
@@ -50,5 +50,10 @@ public class Passenger {
       StringBuilder sb = new StringBuilder();
       sb.append(String.format("| %-16s | %-20s | %-15s |", this.pcode, this.name, this.phone));
       return sb.toString();
+   }
+
+   @Override
+   public int compareTo(Passenger other) {
+      return this.pcode.compareTo(other.pcode);
    }
 }

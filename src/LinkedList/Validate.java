@@ -20,7 +20,7 @@ import java.util.Scanner;
  *
  * @author ASUS
  */
-public class Validate extends MyList {
+public class Validate{
     private final Scanner in = new Scanner(System.in);
 
     public String checkName() {
@@ -51,83 +51,6 @@ public class Validate extends MyList {
             } catch (NumberFormatException e) {
                 System.err.println("Please input number integer");
                 System.out.print("Enter again: ");
-            }
-        }
-    }
-
-    public String searchPcode(PassengerList pas) {
-        while (true) {
-            String name = in.nextLine().trim();
-            if (name.isEmpty()) {
-                System.out.println("Passenger code cannot be empty. Please enter again:");
-                continue;
-            }
-            if (!name.matches("^P\\d+$")) {
-                System.out.println(
-                        "The passenger code should be in format P00X (where X is a digit). Please enter again:");
-                continue;
-            }
-            boolean exists = false;
-            for (Node<Passenger> current = pas.getHead(); current != null; current = current.next) {
-                if (current.info.getPcode().equals(name)) {
-                    System.out.println("The Passenger code already exists. Please enter another:");
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                return name;
-            }
-        }
-    }
-
-    public String checkPhone(PassengerList pas) {
-        while (true) {
-            String phone = in.nextLine().trim();
-            if (phone.isEmpty()) {
-                System.out.println("Phone number cannot be empty. Please enter again:");
-                continue;
-            }
-            if (!phone.matches("\\d+")) {
-                System.out.println("The phone number should contain only digits. Please enter again:");
-                continue;
-            }
-            boolean exists = false;
-            for (Node<Passenger> current = pas.getHead(); current != null; current = current.next) {
-                if (current.info.getPhone().equals(phone)) {
-                    System.out.println("The Passenger phone already exists. Please enter another:");
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                return phone;
-            }
-        }
-    }
-
-    public String searchBcode(BusList bus) {
-        while (true) {
-            String name = in.nextLine().trim();
-            if (name.isEmpty()) {
-                System.out.println("Bus code cannot be empty. Please enter again:");
-                continue;
-            }
-
-            if (!name.matches("^B00\\d+$")) {
-                System.out.println("The bus code should be in format B00X (where X is a digit). Please enter again:");
-                continue;
-            }
-            boolean exists = false;
-            for (Node<Bus> current = bus.getHead(); current != null; current = current.next) {
-                if (current.info.getBcode().equals(name)) {
-                    System.out.println("The Bus code already exists. Please enter another:");
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                return name;
             }
         }
     }

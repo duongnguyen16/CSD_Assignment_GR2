@@ -55,62 +55,61 @@ public class BookingList extends MyList<Booking> {
 
     public void bookBus(BusList busList, PassengerList passengerList) {
         String bcode, pcode;
-        Bus bus;
-        Passenger passenger;
-        int seat;
+        Bus bus = null;
+        Passenger passenger = null;
 
-        while (true) {
-
-            do {
-                System.out.println("Enter bcode: ");
-                bcode = validate.checkInputString();
-                bus = busList.searchByBcode(bcode);
-            } while (bus == null);
-
-            int availableSeats = bus.getSeat() - calculateTotalBookedSeats(bcode, bus);
-            if (availableSeats == 0) {
-                System.out.println("No seats available for this bus. Please choose another bus.");
-                continue;
+        // Get valid bus code
+        do {
+            System.out.print("Enter bus code: ");
+            bcode = validate.checkInputString();
+            bus = busList.searchByBcode(bcode);
+            if (bus == null) {
+                System.out.println("Bus not found. Please try again.");
             }
+        } while (bus == null);
 
-            do {
-                System.out.println("Enter pcode: ");
-                pcode = validate.checkInputString();
-                passenger = passengerList.searchByPcode(pcode);
-            } while (passenger == null);
-
-            if (hasExistingBooking(bcode, pcode)) {
-                System.out.println(
-                        "This passenger already has a booking for this bus. Please choose another bus or passenger.");
-                continue;
-            }
-
-            System.out.println("Enter number of seats (1-" + availableSeats + "): ");
-            seat = validate.checkInputIntLimit(1, availableSeats);
-
-            System.out.println("Booking Details:");
-            System.out.println("Bus Code: " + bcode);
-            System.out.println("Passenger Code: " + pcode);
-            System.out.println("Seats: " + seat);
-            System.out.println("Is this correct? (Y/N)");
-            if (validate.checkInputYN()) {
-                break;
-            }
+        // Check available seats
+        int availableSeats = bus.getSeat() - bus.getBooked();
+        if (availableSeats <= 0) {
+            System.out.println("Sorry, this bus is fully booked.");
+            return;
         }
 
-        Booking bk = new Booking(bcode, pcode, new Date(), false, seat);
-        try {
-            this.addLast(bk);
-            System.out.println("Booking successful.");
-        } catch (Exception e) {
-            System.out.println("An error occurred during booking. The operation has been cancelled.");
+        // Get valid passenger code
+        do {
+            System.out.print("Enter passenger code: ");
+            pcode = validate.checkInputString();
+            passenger = passengerList.searchByPcode(pcode);
+            if (passenger == null) {
+                System.out.println("Passenger not found. Please try again.");
+            }
+        } while (passenger == null);
+
+        // Check if passenger already has a booking for this bus
+        if (hasExistingBooking(bcode, pcode)) {
+            System.out.println("This passenger already has a booking for this bus.");
+            sc.nextLine();
+            return;
         }
+
+        // Get number of seats to book
+        System.out.println("Available seats: " + availableSeats);
+        System.out.print("Enter number of seats to book (1-" + availableSeats + "): ");
+        int seatsToBook = validate.checkInputIntLimit(1, availableSeats);
+
+        // Create booking
+        Booking newBooking = new Booking(bcode, pcode, new Date(), false, seatsToBook);
+        addLast(newBooking);
+        bus.setBooked(bus.getBooked() + seatsToBook);
+
+        System.out.println("Booking created successfully!");
     }
 
-    private boolean hasExistingBooking(String bcode, String pcode) {
-        Node<Booking> current = this.getHead();
+    public boolean hasExistingBooking(String bcode, String pcode) {
+        Node<Booking> current = getHead();
         while (current != null) {
-            if (current.info.getBcode().equals(bcode) && current.info.getPcode().equals(pcode)) {
+            if (current.info.getBcode().equals(bcode) &&
+                    current.info.getPcode().equals(pcode)) {
                 return true;
             }
             current = current.next;
@@ -197,12 +196,12 @@ public class BookingList extends MyList<Booking> {
     }
 
     public void deleteBookingsByBcode(String bcode) {
-        Node<Booking> current = this.getHead();
+        Node<Booking> current = getHead();
         while (current != null) {
             if (current.info.getBcode().equals(bcode)) {
                 Node<Booking> toDelete = current;
                 current = current.next;
-                this.remove(toDelete);
+                remove(toDelete);
             } else {
                 current = current.next;
             }
@@ -210,12 +209,12 @@ public class BookingList extends MyList<Booking> {
     }
 
     public void deleteBookingsByPcode(String pcode) {
-        Node<Booking> current = this.getHead();
+        Node<Booking> current = getHead();
         while (current != null) {
             if (current.info.getPcode().equals(pcode)) {
                 Node<Booking> toDelete = current;
                 current = current.next;
-                this.remove(toDelete);
+                remove(toDelete);
             } else {
                 current = current.next;
             }
@@ -223,21 +222,23 @@ public class BookingList extends MyList<Booking> {
     }
 
     public void displayPassengersForBus(String bcode, PassengerList passengerList) {
+        boolean found = false;
+        Node<Booking> current = getHead();
 
-        int count = 0;
-        Node<Booking> current = this.getHead();
         while (current != null) {
             if (current.info.getBcode().equals(bcode)) {
-                Passenger passenger = passengerList.searchByPcode(current.info.getPcode());
-                count++;
-                if (passenger != null) {
-                    System.out.println(passenger);
+                Passenger p = passengerList.searchByPcode(current.info.getPcode());
+                if (p != null) {
+                    System.out.println(p + " (Seats: " + current.info.getSeat() +
+                            ", Paid: " + (current.info.isPaid() ? "Yes" : "No") + ")");
+                    found = true;
                 }
             }
             current = current.next;
         }
-        if (count == 0) {
-            System.out.println("No passenger found.");
+
+        if (!found) {
+            System.out.println("No passengers found for this bus.");
         }
     }
 

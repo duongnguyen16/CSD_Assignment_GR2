@@ -7,7 +7,9 @@ package BBSList;
  */
 import BBSmanager.Bus;
 import LinkedList.MyList;
-import LinkedList.Node;
+import BStree.MyBSTree;
+import BStree.MyQueue;
+import BStree.Node;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -16,7 +18,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import LinkedList.Validate;
 
-public class BusList extends MyList<Bus> {
+public class BusList extends MyBSTree<Bus> {
    public Validate vali = new Validate();
    public Scanner scan;
    public Validate validate = new Validate();
@@ -42,7 +44,7 @@ public class BusList extends MyList<Bus> {
                int booked = Integer.parseInt(parts[6].trim());
                double atime = Double.parseDouble(parts[7].trim());
                Bus bus = new Bus(bcode, bnum, dstation, astation, dtime, seat, booked, atime);
-               this.addLast(bus);
+               this.insert(bus);
             }
          }
          br.close();
@@ -59,7 +61,7 @@ public class BusList extends MyList<Bus> {
       do {
          System.out.println("Enter the code of the bus: ");
          bcode = scan.nextLine();
-      } while (!searchCode(bcode));
+      } while (!searchBcode(bcode));
 
       System.out.println("Enter the number of the bus: ");
       String bnum = scan.nextLine();
@@ -83,179 +85,128 @@ public class BusList extends MyList<Bus> {
       double atime = validate.checkInputDoubleLimit(dtime, 24);
 
       Bus bus = new Bus(bcode, bnum, dstation, astation, dtime, seat, booked, atime);
-      addLast(bus);
+      insert(bus);
    }
 
-   public void displayBusList() {
+   public void displayBusListByInOrder() {
       System.out.printf("| %-10s | %-15s | %-25s | %-25s | %-20s | %-20s | %-25s | %-20s |\n", "Bus Code",
             "Number of Bus", "Departing Station", "Arriving Station", "Departing Time", "Number of Seats",
             "Number of seats booked", "Arriving Time");
-      this.traverse();
+      MyList<Bus> busList = new MyList<>();
+      inOrderToMyList(busList, root);
+      busList.traverse();
    }
 
-   public boolean saveToFile() {
-      try {
-         BufferedWriter bw = new BufferedWriter(new FileWriter("./buses.txt"));
-         boolean var4;
-         try {
-            Node<Bus> current = this.getHead();
+   public void displayBusListByPostOrder() {
+      System.out.printf("| %-10s | %-15s | %-25s | %-25s | %-20s | %-20s | %-25s | %-20s |\n", "Bus Code",
+            "Number of Bus", "Departing Station", "Arriving Station", "Departing Time", "Number of Seats",
+            "Number of seats booked", "Arriving Time");
+      MyList<Bus> busList = new MyList<>();
+      postOrderToMyList(busList, root);
+      busList.traverse();
+   }
 
-            while (true) {
-               if (current == null) {
-                  var4 = true;
-                  break;
-               }
+   public void displayBusListByBreath() {
+      System.out.printf("| %-10s | %-15s | %-25s | %-25s | %-20s | %-20s | %-25s | %-20s |\n", "Bus Code",
+            "Number of Bus", "Departing Station", "Arriving Station", "Departing Time", "Number of Seats",
+            "Number of seats booked", "Arriving Time");
+      MyList<Bus> busList = new MyList<>();
+      breathFirstToMyList(busList, root);
+      busList.traverse();
+   }
 
-               bw.write(((Bus) current.info).saveFile());
-               bw.newLine();
-               current = current.next;
-            }
-         } catch (Throwable var6) {
-            try {
-               bw.close();
-            } catch (Throwable var5) {
-               var6.addSuppressed(var5);
-            }
-
-            throw var6;
-         }
-
-         bw.close();
-         return var4;
-      } catch (IOException var7) {
-         var7.printStackTrace();
-         return false;
+   public void saveToFile() {
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter("./buses.txt"))) {
+         postOrder(root, bw);
+         System.out.println("Save to file Successful");
+      } catch (IOException e) {
+         e.printStackTrace();
       }
    }
 
+   private void postOrder(Node<Bus> p, BufferedWriter bw) throws IOException {
+      if (p == null) {
+         return;
+      }
+      postOrder(p.left, bw);
+      postOrder(p.right, bw);
+      bw.write(p.info.getBcode() + ", " +
+            p.info.getBnum() + ", " +
+            p.info.getDstation() + ", " +
+            p.info.getAstation() + ", " +
+            p.info.getDtime() + ", " +
+            p.info.getSeat() + ", " +
+            p.info.getBooked() + ", " +
+            p.info.getAtime());
+      bw.newLine();
+   }
+
    public Bus searchByBcode(String bcode) {
-      for (Node<Bus> current = this.getHead(); current != null; current = current.next) {
-         if (((Bus) current.info).getBcode().equalsIgnoreCase(bcode)) {
-            return (Bus) current.info;
+      Node<Bus> current = root;
+      while (current != null) {
+         int comparison = current.info.getBcode().toLowerCase().compareTo(bcode.toLowerCase());
+         if (comparison == 0) {
+            return current.info;
+         } else if (comparison > 0) {
+            current = current.left;
+         } else {
+            current = current.right;
          }
       }
       return null;
    }
 
-   public boolean deleteByBcode(String bcode, BookingList bookingList) {
-      Node<Bus> current = this.getHead();
-      while (current != null) {
-         if (current.info.getBcode().equalsIgnoreCase(bcode)) {
+   public boolean deleteByBcodeCopying(String bcode, BookingList bookingList) {
 
-            bookingList.deleteBookingsByBcode(bcode);
-
-            this.remove(current);
-            return true;
-         }
-         current = current.next;
+      bookingList.deleteBookingsByBcode(bcode);
+      Bus busToDelete = searchByBcode(bcode);
+      if (busToDelete != null) {
+         deleteByCopy(busToDelete);
+         return true;
       }
       return false;
    }
 
-   public void sortByBcode() {
-      Node<Bus> head = this.getHead();
-      if (head != null && head.next != null) {
-         boolean swapped;
-         do {
-            swapped = false;
-
-            for (Node<Bus> current = head; current.next != null; current = current.next) {
-               if (((Bus) current.info).getBcode().compareTo(((Bus) current.next.info).getBcode()) > 0) {
-                  Bus temp = (Bus) current.info;
-                  current.info = current.next.info;
-                  current.next.info = temp;
-                  swapped = true;
-               }
-            }
-         } while (swapped);
-
+   public boolean deleteByBcodeMerging(String bcode, BookingList bookingList) {
+      bookingList.deleteBookingsByBcode(bcode);
+      Bus busToDelete = searchByBcode(bcode);
+      if (busToDelete != null) {
+         deleteByMerging(busToDelete);
+         return true;
       }
+      return false;
    }
 
-   public void inputAndAddBusBeginning() {
-      String bcode;
-      do {
-         System.out.println("Enter the code of the bus: ");
-         bcode = scan.nextLine();
-      } while (!searchCode(bcode));
-
-      System.out.println("Enter the number of the bus: ");
-      String bnum = scan.nextLine();
-
-      System.out.println("Enter the departing station of the bus: ");
-      String dstation = scan.nextLine();
-
-      System.out.println("Enter the arriving station of the bus: ");
-      String astation = scan.nextLine();
-
-      System.out.println("Enter the departing time of the bus: ");
-      double dtime = validate.checkInputDoubleLimit(0, 24);
-
-      System.out.println("Enter the number of seats in the bus: ");
-      int seat = validate.checkInputIntLimit(0, Integer.MAX_VALUE);
-
-      System.out.println("Enter the number of seats which are booked: ");
-      int booked = validate.checkInputIntLimit(0, seat);
-
-      System.out.println("Enter the arriving time of the bus: ");
-      double atime = validate.checkInputDoubleLimit(dtime, 24);
-
-      Bus bus = new Bus(bcode, bnum, dstation, astation, dtime, seat, booked, atime);
-      addFirst(bus);
+   public void balance() {
+      MyList<Bus> n = new MyList<>();
+      breathFirstToMyList(n, root);
+      clear();
+      balance(n, 0, n.size() - 1);
    }
 
-   public void addAfterPosition() {
-      if (size() <= 0) {
-         System.out.println("The list is empty");
-         return;
+   public int countBuses() {
+      return countBuses(root);
+   }
+
+   private int countBuses(Node<Bus> node) {
+      if (node == null) {
+         return 0;
       }
-      System.out.println("Enter position to add after: ");
-      int k = scan.nextInt();
-      scan.nextLine();
-      String bcode;
-      do {
-         System.out.println("Enter the code of the bus: ");
-         bcode = scan.nextLine();
-      } while (!searchCode(bcode));
-
-      System.out.println("Enter the number of the bus: ");
-      String bnum = scan.nextLine();
-
-      System.out.println("Enter the departing station of the bus: ");
-      String dstation = scan.nextLine();
-
-      System.out.println("Enter the arriving station of the bus: ");
-      String astation = scan.nextLine();
-
-      System.out.println("Enter the departing time of the bus: ");
-      double dtime = validate.checkInputDoubleLimit(0, 24);
-
-      System.out.println("Enter the number of seats in the bus: ");
-      int seat = validate.checkInputIntLimit(0, Integer.MAX_VALUE);
-
-      System.out.println("Enter the number of seats which are booked: ");
-      int booked = validate.checkInputIntLimit(0, seat);
-
-      System.out.println("Enter the arriving time of the bus: ");
-      double atime = validate.checkInputDoubleLimit(dtime, 24);
-
-      Bus bus = new Bus(bcode, bnum, dstation, astation, dtime, seat, booked, atime);
-      insertAfter(k, bus);
+      return 1 + countBuses(node.left) + countBuses(node.right);
    }
 
-   public void deleteAtPosition(int k) {
-      if (this.remove(k)) {
-         System.out.println("Bus removed successfully");
-      } else {
-         System.out.println("Bus not found or cannot be removed");
-      }
+   public boolean searchBcode(String name) {
+      Node<Bus> current = root;
+      while (current != null) {
+         int comparison = current.info.getBcode().compareTo(name);
 
-   }
-
-   public boolean searchCode(String name) {
-      for (Node<Bus> current = this.getHead(); current != null; current = current.next) {
-         if (current.info.getBcode().equalsIgnoreCase(name)) {
+         if (comparison == 0) {
+            System.err.println("Code already exists");
             return false;
+         } else if (comparison > 0) {
+            current = current.left;
+         } else {
+            current = current.right;
          }
       }
       return true;
